@@ -1,8 +1,5 @@
 package com.example.moattravel.service;
 
-
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,34 +12,39 @@ import com.example.moattravel.repository.FavoriteRepository;
 
 @Service
 @Transactional
-public class FavoriteService{
+public class FavoriteService {
 	private final FavoriteRepository favoriteRepository;
-	
+
 	public FavoriteService(FavoriteRepository favoriteRepository) {
 		this.favoriteRepository = favoriteRepository;
 	}
-	//トグル登録
-	public boolean toggleFavorite(User user, House house) {
-		Optional<Favorite>existing =favoriteRepository.findByUserAndHouse(user,house);
-		//削除時の動き
-		if(existing.isPresent()) {
-			favoriteRepository.delete(existing.get());
-			return false;
-		}else {
-			//登録時の動き
-			Favorite fav = new Favorite();
-			fav.setUser(user);
-			fav.setHouse(house);
-			favoriteRepository.save(fav);
-			return true;
-			
-		}
+
+	//お気に入り登録済みかの判断
+	public boolean isFavorite(User user, House house) {
+		return favoriteRepository.existsByUserAndHouse(user, house);
+
 	}
-	//ログインユーザーのお気に入りリストを取得する
-	public Page<Favorite>getFavorite(User user,Pageable pageable){
-		return favoriteRepository.findByUserOrderByCreatedAtDesc(user,pageable);
+
+	// トグル（登録／削除）
+	@Transactional
+	public void toggleFavorite(User user, House house) {
+		favoriteRepository.findByUserAndHouse(user, house)
+				.ifPresentOrElse(
+						favoriteRepository::delete,
+						() -> {
+							Favorite favorite = new Favorite();
+							favorite.setUser(user);
+							favorite.setHouse(house);
+							favoriteRepository.save(favorite);
+						});
 	}
-	
-	
-	
+
+	// ユーザーのお気に入り一覧取得
+	public Page<House> getFavorites(User user, Pageable pageable) {
+		// Page<Favorite> を取得
+		Page<Favorite> favoritesPage = favoriteRepository.findByUserOrderByCreatedAtDesc(user, pageable);
+
+		// Page<Favorite> を Page<House> に変換
+		return favoritesPage.map(Favorite::getHouse);
+	}
 }
