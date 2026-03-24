@@ -66,6 +66,8 @@ public class WebSecurityConfig {
                     "/stripe/webhook"
                 ).permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                //お気に入り登録はログイン必須に
+                .requestMatchers("/favorites/**").authenticated()
                 .anyRequest().authenticated()
             )
 
