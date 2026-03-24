@@ -61,10 +61,18 @@ CREATE TABLE IF NOT EXISTS reservations(
 	
 );
 CREATE TABLE IF NOT EXISTS favorites(
-	id INT NOT NULL AUTO_INCREMENT REIMARY KEY,
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	house_id INT NOT NULL,
 	user_id INT NOT NULL,
-	created_at DATETIME,
-	途中！！！！
-)
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	
+	CONSTRAINT fk_favorites_house
+	FOREIGN KEY(house_id) REFERENCES houses(id) ON DELETE CASCADE,
+	
+	CONSTRAINT fk_favorites_user
+	FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+	
+	CONSTRAINT uk_favorites_user_house
+	UNIQUE (user_id, house_id)
+);
 
