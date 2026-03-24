@@ -22,6 +22,8 @@ import com.example.moattravel.form.HouseRegisterForm;
 import com.example.moattravel.repository.HouseRepository;
 import com.example.moattravel.service.HouseService;
 
+
+
 @Controller
 @RequestMapping("/admin/houses")
 public class AdminHouseController {

@@ -60,4 +60,11 @@ CREATE TABLE IF NOT EXISTS reservations(
 	FOREIGN KEY(user_id)REFERENCES users(id)
 	
 );
+CREATE TABLE IF NOT EXISTS favorites(
+	id INT NOT NULL AUTO_INCREMENT REIMARY KEY,
+	house_id INT NOT NULL,
+	user_id INT NOT NULL,
+	created_at DATETIME,
+	途中！！！！
+)
 
