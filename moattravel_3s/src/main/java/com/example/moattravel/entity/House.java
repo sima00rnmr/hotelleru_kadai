@@ -9,6 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import org.springframework.data.annotation.Transient;
+
 import lombok.Data;
 
 @Entity//これはエンティティクラスとして使う
@@ -25,7 +27,7 @@ public class House{
 	 * 
 	 * */
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name ="Id")
+	@Column(name ="id")
 	private Integer id;
 	
 	@Column(name ="name")
@@ -58,7 +60,8 @@ public class House{
 	@Column(name ="updated_at",insertable = false, updatable = false)
 	private Timestamp updatedAt;
 	
-	
+	@Transient
+    private boolean favorite;
 	
 	
 }
