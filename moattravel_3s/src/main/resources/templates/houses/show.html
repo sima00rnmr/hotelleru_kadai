@@ -32,11 +32,13 @@
 						<div class="d-flex justify-content-between align-items-end mb-4">
 							<h1 class="mb-4 text-center" th:text="${house.getName()}"></h1>
 							<!-- お気に入りボタン -->
-							<form th:action="@{/favorites/toggle/{houseId}(houseId=${house.id})}" method="post">
-								<button type="submit" class="btn btn-outline-primary w-100 mb-3">
-									<span th:text="${house.favorite ? '★ お気に入り済み' : '☆ お気に入り'}"></span>
-								</button>
-							</form>
+							<div sec:authorize="isAuthenticated()">
+								<form th:action="@{/favorites/toggle/{houseId}(houseId=${house.id})}" method="post">
+									<button type="submit" class="btn btn-outline-primary w-100 mb-3">
+										<span th:text="${house.favorite ? '★ お気に入り済み' : '☆ お気に入り'}"></span>
+									</button>
+								</form>
+							</div>
 						</div>
 						<div th:if="${errorMessage}" class="alert alert-danger">
 							<span th:text="${errorMessage}"></span>
