@@ -1,22 +1,91 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
+	<div th:replace="~{fragment :: meta}"></div>
+	<div th:replace="~{fragment :: styles}"></div>
 	<title>お気に入り一覧</title>
 </head>
 
 <body>
+	<div class="moattravel-wrapper">
+		<!-- ヘッダー -->
+		<div th:replace="~{fragment :: header}"></div>
 
-	<h1>お気に入り一覧</h1>
+		<main>
 
-	<div th:if="${favorites.isEmpty()}">
-		<p>お気に入りはまだありません</p>
+			<h1>お気に入り一覧</h1>
+
+			<div th:if="${favorites.content.isEmpty()}">
+				<p>お気に入りはまだありません</p>
+			</div>
+
+			<table class="table">
+				<thead>
+					<tr>
+						<!--サムネイル-->
+						<th style="width:100px;"></th>
+
+						<th style="width:120px;">民宿名</th>
+						<th style="width:80px;">追加日</th>
+						<th style="width:150px;">説明</th>
+						<th style="width:120px;">宿泊料金</th>
+						
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr th:each="favorite : ${favorites.content}">
+						<td>
+							<img th:src="@{/storage/__${favorite.house.imageName}__}" style="width:100px;">
+						</td>
+						<td>
+							<a th:href="@{/houses/{id}(id=${favorite.id})}" th:text="${favorite.house.name}"></a>
+						</td>
+						<!--お気に入り追加日　未実装-->
+						<td th:text="${#temporals.format(favorite.createdAt, 'yyyy/MM/dd HH:mm')}"></td>
+						<td th:text="${#strings.abbreviate(favorite.house.description,50)}"></td>
+						<td th:text="${#numbers.formatInteger(favorite.house.price, 1, 'COMMA') + '円'}">
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- ページネーション -->
+			<div th:if="${favorites.totalPages > 1}" class="d-flex justify-content-center">
+				<nav>
+					<ul class="pagination">
+
+						<!-- 前へ -->
+						<li class="page-item">
+							<span th:if="${favorites.first}" class="page-link disabled">前</span>
+							<a th:unless="${favorites.first}" th:href="@{/favorites(page=${favorites.number - 1})}"
+								class="page-link">前</a>
+						</li>
+
+						<!-- ページ番号 -->
+						<li th:each="i : ${#numbers.sequence(0, favorites.totalPages - 1)}" class="page-item">
+
+							<span th:if="${i == favorites.number}" class="page-link active" th:text="${i + 1}"></span>
+
+							<a th:unless="${i == favorites.number}" th:href="@{/favorites(page=${i})}" class="page-link"
+								th:text="${i + 1}"></a>
+						</li>
+
+						<!-- 次へ -->
+						<li class="page-item">
+							<span th:if="${favorites.last}" class="page-link disabled">次</span>
+							<a th:unless="${favorites.last}" th:href="@{/favorites(page=${favorites.number + 1})}"
+								class="page-link">次</a>
+						</li>
+
+					</ul>
+				</nav>
+			</div>
+		</main>
+		<!-- フッター -->
+		<div th:replace="~{fragment :: footer}"></div>
 	</div>
-
-	<div th:each="house : ${favorites}">
-		<p th:text="${house.name}"></p>
-	</div>
-
+	<div th:replace="~{fragment :: scripts}"></div>
 </body>
 
 </html>

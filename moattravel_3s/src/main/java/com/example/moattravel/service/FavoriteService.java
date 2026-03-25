@@ -42,7 +42,7 @@ public class FavoriteService {
 	// ユーザーのお気に入り一覧取得
 	public Page<House> getFavorites(User user, Pageable pageable) {
 		// Page<Favorite> を取得
-		Page<Favorite> favoritesPage = favoriteRepository.findByUserOrderByCreatedAtDesc(user, pageable);
+		Page<Favorite> favoritesPage = favoriteRepository.findByUserWithHouse(user, pageable);
 
 		// Page<Favorite> を Page<House> に変換
 		return favoritesPage.map(Favorite::getHouse);
