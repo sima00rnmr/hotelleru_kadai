@@ -4,7 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import com.example.moattravel.entity.House;
 import com.example.moattravel.entity.User;
 import com.example.moattravel.form.ReservationInputForm;
 import com.example.moattravel.repository.HouseRepository;
+import com.example.moattravel.repository.UserRepository;
 import com.example.moattravel.service.FavoriteService;
 
 @Controller
@@ -23,10 +25,12 @@ import com.example.moattravel.service.FavoriteService;
 public class HouseController {
 	private final HouseRepository houseRepository;
 	private final FavoriteService favoriteService;
+	private final UserRepository userRepository;
 
-	public HouseController(HouseRepository houseRepository, FavoriteService favoriteService) {
+	public HouseController(HouseRepository houseRepository, FavoriteService favoriteService,UserRepository userRepository) {
 		this.houseRepository = houseRepository;
 		this.favoriteService = favoriteService;
+		this.userRepository =userRepository;
 	}
 
 	@GetMapping
@@ -93,12 +97,16 @@ public class HouseController {
 
 	@GetMapping("/{id}")
 	public String show(@PathVariable(name = "id") Integer id,
-			@AuthenticationPrincipal User user, // ここでログインユーザー取得
 			Model model) {
 		House house = houseRepository.getReferenceById(id);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
 		//お気に入り登録のフラグ
-		if (user != null) {
+		if (auth!= null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+			
+			String email =auth.getName();
+			User user =userRepository.findByEmail(email);
+			
 			boolean isFavorite = favoriteService.isFavorite(user, house);
 			house.setFavorite(isFavorite);
 		} else {
