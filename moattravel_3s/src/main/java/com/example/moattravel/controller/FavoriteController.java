@@ -1,6 +1,7 @@
 package com.example.moattravel.controller;
 
 import org.springframework.data.domain.Page;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
@@ -10,6 +11,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.moattravel.entity.Favorite;
 import com.example.moattravel.entity.House;
@@ -54,20 +58,20 @@ public class FavoriteController {
 	}
 
 	@PostMapping("/favorites/toggle/{houseId}")
-	public String toggleFavorite(@PathVariable Integer houseId) {
-
+	@ResponseBody
+	public Map<String, Object> toggleFavoriteAjax(@PathVariable Integer houseId) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String email = auth.getName();
-
 		User user = userRepository.findByEmail(email);
-
 		House house = houseRepository.getReferenceById(houseId);
 
 		favoriteService.toggleFavorite(user, house);
+		boolean isFavorite = favoriteService.isFavorite(user, house);
 
-		//宿にリダイレクト（ダブル送信を禁止）
-		return "redirect:/houses/" + houseId;
-
+		Map<String, Object> result = new HashMap<>();
+		result.put("houseId", houseId);
+		result.put("isFavorite", isFavorite);
+		return result;
 	}
 
 }
