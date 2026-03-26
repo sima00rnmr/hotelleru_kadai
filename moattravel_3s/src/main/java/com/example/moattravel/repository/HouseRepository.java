@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.example.moattravel.entity.House;
 
@@ -49,4 +50,13 @@ public interface HouseRepository extends JpaRepository<House, Integer> {
 	public Page<House> findByAddressLike(String area, Pageable pageable);
 
 	public Page<House> findByPriceLessThanEqual(Integer price, Pageable pageable);
+	
+	@Query("""
+		    SELECT h, COUNT(f)
+		    FROM House h
+		    LEFT JOIN Favorite f ON h.id = f.house.id
+		    GROUP BY h
+		    ORDER BY COUNT(f) DESC
+		""")
+		Page<Object[]> findAllOrderByFavoriteCountDesc(Pageable pageable);
 }

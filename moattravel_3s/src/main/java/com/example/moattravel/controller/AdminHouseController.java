@@ -45,32 +45,53 @@ public class AdminHouseController {
 	@GetMapping
 	public String index(Model model,
 			@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable,
-			@RequestParam(name = "keyword", required = false) String keyword) {
+			@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(name = "sort", required = false) String sort) {
 
 		Page<House> housePage;
-
-		if (keyword != null && !keyword.isEmpty()) {
-			//キーワード検索して該当するものがあったらこれを表示してね
-			housePage = houseRepository.findByNameLike("%" + keyword + "%", pageable);
-		} else {
-			//無かった場合は全部表示で良いよ
-			housePage = houseRepository.findAll(pageable);
-		}
-		List<Object[]> results = favoriteAdminRepository.countFavoritesGroupByHouse();
-
 		Map<Integer, Long> favoriteCountMap = new HashMap<>();
+		//元々のキーワード検索に加えてソートを追加する（人気順に並べるorID順）
+		if ("favorite".equals(sort)) {
 
-		for (Object[] row : results) {
-			Integer houseId = (Integer) row[0];
-			Long count = (Long) row[1];
-			favoriteCountMap.put(houseId, count);
+			Page<Object[]> resultPage = houseRepository.findAllOrderByFavoriteCountDesc(pageable);
+			List<House> houses = new java.util.ArrayList<>();
+			for (Object[] row : resultPage.getContent()) {
+				House house = (House) row[0];
+				Long count = (Long) row[1];
+
+				houses.add(house);
+				favoriteCountMap.put(house.getId(), count);
+			}
+
+			housePage = new org.springframework.data.domain.PageImpl<>(
+					houses, pageable, resultPage.getTotalElements());
+		} else {
+
+			//既存の部分
+
+			if (keyword != null && !keyword.isEmpty()) {
+				//キーワード検索して該当するものがあったらこれを表示してね
+				housePage = houseRepository.findByNameLike("%" + keyword + "%", pageable);
+			} else {
+				//無かった場合は全部表示で良いよ
+				housePage = houseRepository.findAll(pageable);
+			}
+			List<Object[]> results = favoriteAdminRepository.countFavoritesGroupByHouse();
+
+			for (Object[] row : results) {
+				Integer houseId = (Integer) row[0];
+				Long count = (Long) row[1];
+				favoriteCountMap.put(houseId, count);
+			}
 		}
 
 		model.addAttribute("housePage", housePage);
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("favoriteCountMap", favoriteCountMap);
+		model.addAttribute("sort", sort);
 
 		return "admin/houses/index";
+
 	}
 
 	@GetMapping("{id}")

@@ -32,7 +32,18 @@
 									</button>
 								</div>
 							</form>
+							<!-- 人気順ソート-->
+							<form method="get" th:action="@{/admin/houses}" class="mb-3">
 
+							    <select name="sort" class="form-select" onchange="this.form.submit()">
+							        <option value="" th:selected="${sort == null}">ID順</option>
+							        <option value="favorite" th:selected="${sort == 'favorite'}">人気順</option>
+							    </select>
+								<input type="hidden" name="keyword" th:value="${keyword}">
+
+								</form>
+
+							<!--新規登録ボタン -->
 							<a th:href="@{/admin/houses/register}" class="btn text-white shadow-sm mb-3 moattravel-btn">
 								登録
 							</a>
@@ -66,8 +77,8 @@
 									<td th:text="${house.getAddress()}"></td>
 									<td th:text="${house.getPhoneNumber()}"></td>
 									<td>
-									       <span th:text="${favoriteCountMap[house.id] ?: 0} + ' 件'"></span>
-									   </td>
+										<span th:text="${favoriteCountMap[house.id] ?: 0} + ' 件'"></span>
+									</td>
 									<td>
 										<a th:href="@{/admin/houses/{id}(id=${house.getId()})}">
 											詳細
