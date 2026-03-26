@@ -1,7 +1,10 @@
 package com.example.moattravel.controller;
 
-import org.springframework.data.domain.Page;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
@@ -11,13 +14,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.moattravel.entity.Favorite;
 import com.example.moattravel.entity.House;
 import com.example.moattravel.entity.User;
+import com.example.moattravel.repository.FavoriteAdminRepository;
 import com.example.moattravel.repository.FavoriteRepository;
 import com.example.moattravel.repository.HouseRepository;
 import com.example.moattravel.repository.UserRepository;
@@ -30,13 +32,16 @@ public class FavoriteController {
 	private final FavoriteRepository favoriteRepository;
 	private final HouseRepository houseRepository;
 	private final UserRepository userRepository;
+	private final FavoriteAdminRepository favoriteAdminRepository;
 
 	public FavoriteController(FavoriteService favoriteService, FavoriteRepository favoriteRepository,
-			HouseRepository houseRepository, UserRepository userRepository) {
+			HouseRepository houseRepository, UserRepository userRepository,
+			FavoriteAdminRepository favoriteAdminRepository) {
 		this.favoriteService = favoriteService;
 		this.favoriteRepository = favoriteRepository;
 		this.houseRepository = houseRepository;
 		this.userRepository = userRepository;
+		this.favoriteAdminRepository = favoriteAdminRepository;
 
 	}
 
@@ -73,5 +78,27 @@ public class FavoriteController {
 		result.put("isFavorite", isFavorite);
 		return result;
 	}
+
+	@GetMapping("/admin/favorites/ranking")
+	public String favoriteRanking(Model model) {
+
+		List<Object[]> results = favoriteAdminRepository.countFavoritesGroupByHouse();
+
+		Map<Integer, Long> favoriteCountMap = new HashMap<>();
+
+		for (Object[] row : results) {
+			Integer houseId = (Integer) row[0];
+			Long count = (Long) row[1];
+			favoriteCountMap.put(houseId, count);
+		}
+
+		List<House> houses = houseRepository.findAll();
+
+		model.addAttribute("houses", houses);
+		model.addAttribute("favoriteCountMap", favoriteCountMap);
+
+		return "admin/favorites/ranking";
+	}
+	
 
 }

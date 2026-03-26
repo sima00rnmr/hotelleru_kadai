@@ -1,5 +1,9 @@
 package com.example.moattravel.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -19,20 +23,22 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.moattravel.entity.House;
 import com.example.moattravel.form.HouseEditForm;
 import com.example.moattravel.form.HouseRegisterForm;
+import com.example.moattravel.repository.FavoriteAdminRepository;
 import com.example.moattravel.repository.HouseRepository;
 import com.example.moattravel.service.HouseService;
-
-
 
 @Controller
 @RequestMapping("/admin/houses")
 public class AdminHouseController {
 	private final HouseRepository houseRepository;
 	private final HouseService houseService;
+	private final FavoriteAdminRepository favoriteAdminRepository;
 
-	public AdminHouseController(HouseRepository houseRepository, HouseService houseService) {
+	public AdminHouseController(HouseRepository houseRepository, HouseService houseService,
+			FavoriteAdminRepository favoriteAdminRepository) {
 		this.houseRepository = houseRepository;
 		this.houseService = houseService;
+		this.favoriteAdminRepository = favoriteAdminRepository;
 
 	}
 
@@ -50,9 +56,19 @@ public class AdminHouseController {
 			//無かった場合は全部表示で良いよ
 			housePage = houseRepository.findAll(pageable);
 		}
+		List<Object[]> results = favoriteAdminRepository.countFavoritesGroupByHouse();
+
+		Map<Integer, Long> favoriteCountMap = new HashMap<>();
+
+		for (Object[] row : results) {
+			Integer houseId = (Integer) row[0];
+			Long count = (Long) row[1];
+			favoriteCountMap.put(houseId, count);
+		}
 
 		model.addAttribute("housePage", housePage);
 		model.addAttribute("keyword", keyword);
+		model.addAttribute("favoriteCountMap", favoriteCountMap);
 
 		return "admin/houses/index";
 	}
@@ -125,6 +141,7 @@ public class AdminHouseController {
 
 		return "redirect:/admin/houses";
 	}
+
 	/*更新と再度アクセス、何が違うの…？
 	 * return 画面名　とredirect:～
 	 * return 画面名→画面遷移…の処理だと、更新処理はPOSTで実行
@@ -138,11 +155,12 @@ public class AdminHouseController {
 	 * 
 	 * */
 	@PostMapping("/{id}/delete")
-	public String delete(@PathVariable(name = "id")Integer id,RedirectAttributes redirectAttributes) {
+	public String delete(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {
 		houseRepository.deleteById(id);
 		//民宿削除したら一覧ページにアクセスしてね
-		redirectAttributes.addFlashAttribute("successMessage","民宿を削除しました");
+		redirectAttributes.addFlashAttribute("successMessage", "民宿を削除しました");
 		//redirect:　このURLにもう一度リクエストを送っての意味。
 		return "redirect:/admin/houses";
 	}
+
 }
