@@ -9,9 +9,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+import lombok.Data;
+
 //一旦Userをemail=トークンで紐づけられるようにすればいいので…
 
 @Entity
+@Data
 public class PasswordResetToken {
 
     @Id
