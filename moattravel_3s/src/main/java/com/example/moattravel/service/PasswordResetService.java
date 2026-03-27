@@ -54,4 +54,9 @@ public class PasswordResetService {
     public void deleteToken(PasswordResetToken token) {
         tokenRepository.delete(token);
     }
+    
+    //メールの送信機能
+    public String createResetUrl(String token) {
+        return "http://localhost:8080/reset-password?token=" + token;
+    }
 }
