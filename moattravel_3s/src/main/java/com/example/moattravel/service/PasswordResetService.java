@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.moattravel.entity.PasswordResetToken;
 import com.example.moattravel.entity.User;
@@ -11,6 +12,7 @@ import com.example.moattravel.repository.PasswordResetTokenRepository;
 
 
 @Service
+@Transactional
 public class PasswordResetService {
 
     private final PasswordResetTokenRepository tokenRepository;

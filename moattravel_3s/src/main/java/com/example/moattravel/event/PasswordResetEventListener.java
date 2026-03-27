@@ -5,8 +5,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
-import com.example.moattravel.event.PasswordResetEvent;
-
 @Component
 public class PasswordResetEventListener {
 
@@ -19,8 +17,6 @@ public class PasswordResetEventListener {
     @EventListener
     public void handleEvent(PasswordResetEvent event) {
 
-        // 👇 デバッグ用（まずこれやる）
-        System.out.println(event.getUrl());
 
         // メール送信
         SimpleMailMessage mail = new SimpleMailMessage();
