@@ -35,13 +35,13 @@
 							<!-- 人気順ソート-->
 							<form method="get" th:action="@{/admin/houses}" class="mb-3">
 
-							    <select name="sort" class="form-select" onchange="this.form.submit()">
-							        <option value="" th:selected="${sort == null}">ID順</option>
-							        <option value="favorite" th:selected="${sort == 'favorite'}">人気順</option>
-							    </select>
+								<select name="sort" class="form-select" onchange="this.form.submit()">
+									<option value="" th:selected="${sort == null}">ID順</option>
+									<option value="favorite" th:selected="${sort == 'favorite'}">人気順</option>
+								</select>
 								<input type="hidden" name="keyword" th:value="${keyword}">
 
-								</form>
+							</form>
 
 							<!--新規登録ボタン -->
 							<a th:href="@{/admin/houses/register}" class="btn text-white shadow-sm mb-3 moattravel-btn">
@@ -141,7 +141,7 @@
 										</span>
 
 										<a th:unless="${housePage.isFirst()}"
-											th:href="@{/admin/houses(page=${housePage.getNumber()-1},keyword=${keyword})}"
+											th:href="@{/admin/houses(page=${housePage.getNumber()-1}, keyword=${keyword}, sort=${sort})}"
 											class="page-link moattravel-page-link">
 											前
 										</a>
@@ -157,7 +157,7 @@
 										</span>
 
 										<a th:unless="${i == housePage.getNumber()}"
-											th:href="@{/admin/houses(page=${i},keyword=${keyword})}"
+											th:href="@{/admin/houses(page=${i}, keyword=${keyword}, sort=${sort})}"
 											class="page-link moattravel-page-link" th:text="${i+1}">
 										</a>
 
@@ -171,7 +171,7 @@
 										</span>
 
 										<a th:unless="${housePage.isLast()}"
-											th:href="@{/admin/houses(page=${housePage.getNumber()+1},keyword=${keyword})}"
+											th:href="@{/admin/houses(page=${housePage.getNumber()+1}, keyword=${keyword}, sort=${sort})}"
 											class="page-link moattravel-page-link">
 											次
 										</a>
@@ -180,10 +180,10 @@
 
 								</ul>
 							</nav>
-
 						</div>
 
 					</div>
+
 				</div>
 			</div>
 		</main>
