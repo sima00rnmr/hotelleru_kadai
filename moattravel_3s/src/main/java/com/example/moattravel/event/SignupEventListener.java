@@ -15,6 +15,7 @@ import java.util.UUID;
 import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import com.example.moattravel.entity.User;
@@ -38,8 +39,9 @@ public class SignupEventListener{
 	 * 
 	 * 
 	 * */
+	@Async
 	@EventListener
-	private void onSignupEvent(SignupEvent signupEvent) {
+	public void onSignupEvent(SignupEvent signupEvent) {
 		User user =signupEvent.getUser();
 		//UUID=認証用トークン作る
 		String token =UUID.randomUUID().toString();
