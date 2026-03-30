@@ -1,8 +1,11 @@
 package com.example.moattravel.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,23 +19,24 @@ import com.example.moattravel.service.PasswordResetService;
 
 @Controller
 public class PasswordResetController {
+
 	private final UserRepository userRepository;
 	private final PasswordResetService passwordResetService;
 	private final PasswordEncoder passwordEncoder;
 	private final ApplicationEventPublisher applicationEventPublisher;
-	
-	
+
 	private PasswordResetToken getValidToken(String token) {
 		PasswordResetToken t = passwordResetService.findByToken(token);
 		return (t != null && passwordResetService.isValidToken(t)) ? t : null;
 	}
 
 	public PasswordResetController(UserRepository userRepository, PasswordResetService passwordResetService,
-			PasswordEncoder passwordEncoder,ApplicationEventPublisher applicationEventPublisher) {
+			PasswordEncoder passwordEncoder, ApplicationEventPublisher applicationEventPublisher) {
 		this.passwordResetService = passwordResetService;
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.applicationEventPublisher = applicationEventPublisher;
+	
 	}
 
 	@PostMapping("/forgot-password")
@@ -74,9 +78,11 @@ public class PasswordResetController {
 
 	//パスワードの更新について
 	@PostMapping("/reset-password")
+	@Transactional
 	public String resetPassword(@RequestParam String token,
 			@RequestParam String password,
 			@RequestParam String confirmPassword,
+			HttpServletRequest request,
 			Model model) {
 
 		if (!password.equals(confirmPassword)) {
@@ -95,7 +101,6 @@ public class PasswordResetController {
 		user.setPassword(passwordEncoder.encode(password));
 		userRepository.save(user);
 
-		passwordResetService.deleteToken(resetToken);
 
 		return "redirect:/login?resetSuccess";
 	}
