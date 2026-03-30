@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.moattravel.entity.PasswordResetToken;
 import com.example.moattravel.entity.User;
@@ -36,11 +37,12 @@ public class PasswordResetController {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.applicationEventPublisher = applicationEventPublisher;
-	
+
 	}
 
 	@PostMapping("/forgot-password")
-	public String sendResetMail(@RequestParam String email) {
+	public String sendResetMail(@RequestParam String email,
+			RedirectAttributes redirectAttributes) {
 
 		User user = userRepository.findByEmail(email);
 
@@ -52,7 +54,10 @@ public class PasswordResetController {
 					new PasswordResetEvent(this, user, url));
 		}
 
-		return "redirect:/login?resetRequested";
+		redirectAttributes.addFlashAttribute("successMessage",
+				"リセット用リンクを送信しました");
+
+		return "redirect:/login";
 	}
 
 	//パスワード変更画面
@@ -83,7 +88,7 @@ public class PasswordResetController {
 			@RequestParam String password,
 			@RequestParam String confirmPassword,
 			HttpServletRequest request,
-			Model model) {
+			Model model,RedirectAttributes redirectAttributes) {
 
 		if (!password.equals(confirmPassword)) {
 			model.addAttribute("token", token);
@@ -101,8 +106,8 @@ public class PasswordResetController {
 		user.setPassword(passwordEncoder.encode(password));
 		userRepository.save(user);
 
-
-		return "redirect:/login?resetSuccess";
+		redirectAttributes.addFlashAttribute("successMessage", "パスワードを変更しました");
+		return "redirect:/login";
 	}
 
 }
