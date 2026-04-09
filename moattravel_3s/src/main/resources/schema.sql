@@ -84,4 +84,15 @@ CREATE TABLE IF NOT EXISTS password_reset_token(
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+CREATE TABLE IF NOT EXISTS reservations_archive (
+    id INT PRIMARY KEY,
+    house_id INT,
+    user_id INT,
+    checkin_date DATE,
+    checkout_date DATE,
+    number_of_people INT,
+    amount INT,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
 
