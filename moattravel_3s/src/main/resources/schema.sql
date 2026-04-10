@@ -86,13 +86,13 @@ CREATE TABLE IF NOT EXISTS password_reset_token(
 );
 CREATE TABLE IF NOT EXISTS reservations_archive (
     id INT PRIMARY KEY,
-    house_id INT,
-    user_id INT,
-    checkin_date DATE,
-    checkout_date DATE,
-    number_of_people INT,
-    amount INT,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    house_id INT NOT NULL,
+    user_id INT NOT NULL,
+    checkin_date DATE NOT NULL,
+    checkout_date DATE NOT NULL,
+    number_of_people INT NOT NULL,
+    amount INT NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
 );
 
