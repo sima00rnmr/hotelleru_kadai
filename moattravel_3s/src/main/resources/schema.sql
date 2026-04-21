@@ -95,4 +95,33 @@ CREATE TABLE IF NOT EXISTS reservations_archive (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
 );
+CREATE TABLE IF NOT EXISTS shops (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    category VARCHAR(50) NOT NULL,   
+    description VARCHAR(255),
+    
+    address VARCHAR(255),
+    lat DOUBLE,
+    lng DOUBLE,
 
+    rating DOUBLE DEFAULT 0,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS user_shop_actions (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+
+    user_id INT NOT NULL,
+    shop_id INT NOT NULL,
+
+    action_type VARCHAR(20) NOT NULL,
+    -- click / detail / favorite など
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (shop_id) REFERENCES shops(id)
+);

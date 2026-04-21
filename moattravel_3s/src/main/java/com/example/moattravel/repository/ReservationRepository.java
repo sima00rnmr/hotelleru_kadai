@@ -19,4 +19,7 @@ public interface ReservationRepository extends JpaRepository<Reservation,Integer
 	
 	//バッチ処理にて追加　古い予約データを呼び出す
 	List<Reservation> findByCheckinDateBefore(LocalDate date);
+	
+	
+	 List<Reservation> findByUserId(Integer userId);
 }
