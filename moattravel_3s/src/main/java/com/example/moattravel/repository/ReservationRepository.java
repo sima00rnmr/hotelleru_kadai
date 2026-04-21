@@ -11,6 +11,7 @@ import com.example.moattravel.entity.Reservation;
 import com.example.moattravel.entity.User;
 
 
+
 public interface ReservationRepository extends JpaRepository<Reservation,Integer> {
 
 	public Page<Reservation>

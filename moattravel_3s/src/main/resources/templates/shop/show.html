@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+	<div th:replace="~{fragment :: meta}"></div>
+	<div th:replace="~{fragment :: styles}"></div>
+	<title>ショップ詳細</title>
+</head>
+<body>
+	<div class="moattravel-wrapper">
+
+		<div th:replace="~{fragment :: header}"></div>
+
+		<main>
+			<div class="container moattravel-container pb-5">
+				<h1 class="mb-4" th:text="${shop.name}">ショップ名</h1>
+
+				<p><strong>カテゴリ：</strong><span th:text="${shop.category}"></span></p>
+				<p><strong>住所：</strong><span th:text="${shop.address}"></span></p>
+				<p><strong>説明：</strong><span th:text="${shop.description}"></span></p>
+				<p><strong>評価：</strong><span th:text="${shop.rating}"></span></p>
+
+				<a th:href="@{/reservations}">予約一覧に戻る</a>
+			</div>
+		</main>
+
+		<div th:replace="~{fragment :: footer}"></div>
+	</div>
+
+	<div th:replace="~{fragment :: scripts}"></div>
+</body>
+</html>

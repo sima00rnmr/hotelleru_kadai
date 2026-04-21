@@ -44,6 +44,9 @@ public class Shop {
     
     @Column(name = "rating")
     private Double rating;
+    
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @Transient
     private Double score; // レコメンド用

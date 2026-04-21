@@ -1,6 +1,7 @@
 package com.example.moattravel.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -17,10 +18,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.moattravel.entity.House;
 import com.example.moattravel.entity.Reservation;
+import com.example.moattravel.entity.Shop;
 import com.example.moattravel.entity.User;
 import com.example.moattravel.form.ReservationInputForm;
 import com.example.moattravel.form.ReservationRegisterForm;
@@ -28,7 +31,9 @@ import com.example.moattravel.repository.HouseRepository;
 import com.example.moattravel.repository.ReservationRepository;
 import com.example.moattravel.security.UserDetailsImpl;
 import com.example.moattravel.service.ReservationService;
+import com.example.moattravel.service.ShopService;
 import com.example.moattravel.service.StripeService;
+
 
 @Controller
 public class ReservationController {
@@ -36,24 +41,36 @@ public class ReservationController {
 	private final HouseRepository houseRepository;
 	private final ReservationService reservationService;
 	private final StripeService stripeService;
-
+	private final ShopService shopService;
+	
 	public ReservationController(ReservationRepository reservationRepository, HouseRepository houseRepository,
-			ReservationService reservationService, StripeService stripeService) {
+			ReservationService reservationService, StripeService stripeService,ShopService shopService) {
 		this.reservationRepository = reservationRepository;
 		this.houseRepository = houseRepository;
 		this.reservationService = reservationService;
 		this.stripeService = stripeService;
+		this.shopService = shopService;
 	}
 
 	@GetMapping("/reservations")
 	public String index(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
-			@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable,
-			Model model) {
-		User user = userDetailsImpl.getUser();
-		Page<Reservation> reservationPage = reservationRepository.findByUserOrderByCreatedAtDesc(user, pageable);
-		model.addAttribute("reservationPage", reservationPage);
+	        @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable,
+	        @RequestParam(name = "reserved", required = false) String reserved,
+	        Model model) {
 
-		return "reservations/index";
+	    User user = userDetailsImpl.getUser();
+	    Page<Reservation> reservationPage = reservationRepository.findByUserOrderByCreatedAtDesc(user, pageable);
+	    model.addAttribute("reservationPage", reservationPage);
+
+	    if (reserved != null && !reservationPage.isEmpty()) {
+	        Reservation latestReservation = reservationPage.getContent().get(0);
+	        House house = latestReservation.getHouse();
+
+	        List<Shop> recommendedShops = shopService.getRecommendedShops(house.getAddress());
+	        model.addAttribute("recommendedShops", recommendedShops);
+	    }
+
+	    return "reservations/index";
 	}
 
 	@GetMapping("/houses/{id}/reservations/input")

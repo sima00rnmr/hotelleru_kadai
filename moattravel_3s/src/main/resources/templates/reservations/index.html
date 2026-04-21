@@ -30,6 +30,30 @@
 						<div th:if="${param.reserved}" class="alert alert-info">
 							予約が完了しました。
 						</div>
+						<div th:if="${recommendedShops != null and !recommendedShops.isEmpty()}" class="mb-4">
+							<h2 class="h4">近くのお店もいかがですか？</h2>
+
+							<div class="row">
+								<div class="col-md-4 mb-3" th:each="shop : ${recommendedShops}">
+
+									<a th:href="@{/shops/{id}(id=${shop.id})}" class="text-decoration-none text-dark">
+
+										<div class="card h-100">
+
+											<img th:if="${shop.imageUrl != null and !#strings.isEmpty(shop.imageUrl)}"
+												th:src="${shop.imageUrl}" class="card-img-top" alt="ショップ画像">
+
+											<div class="card-body">
+												<h5 class="card-title" th:text="${shop.name}">店名</h5>
+												<p class="card-text" th:text="${shop.address}">住所</p>
+											</div>
+
+										</div>
+									</a>
+
+								</div>
+							</div>
+						</div>
 
 						<table class="table">
 							<thead>

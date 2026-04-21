@@ -33,9 +33,6 @@ public class StripeService {
         this.reservationService = reservationService;
     }
 
-    // =========================
-    // Checkoutセッション作成
-    // =========================
     public String createStripeSession(
             String houseName,
             ReservationRegisterForm form,
@@ -84,19 +81,14 @@ public class StripeService {
         }
     }
 
-    // =========================
-    // Webhook処理
-    // =========================
     public void processWebhook(String payload, String sigHeader) {
 
         try {
-
             Stripe.apiKey = stripeApiKey;
 
-            Event event = Webhook.constructEvent(
-                    payload,
-                    sigHeader,
-                    webhookSecret);
+            Event event = Webhook.constructEvent(payload, sigHeader, webhookSecret);
+
+            System.out.println("Webhook event type = " + event.getType());
 
             if (!"checkout.session.completed".equals(event.getType())) {
                 return;
@@ -115,22 +107,38 @@ public class StripeService {
                     null);
 
             if (session.getPaymentIntentObject() == null) {
+                System.out.println("paymentIntentObject is null");
                 return;
             }
 
             Map<String, String> metadata =
                     session.getPaymentIntentObject().getMetadata();
 
+            System.out.println("metadata = " + metadata);
+            System.out.println("houseId = " + metadata.get("houseId"));
+            System.out.println("userId = " + metadata.get("userId"));
+            System.out.println("checkinDate = " + metadata.get("checkinDate"));
+            System.out.println("checkoutDate = " + metadata.get("checkoutDate"));
+            System.out.println("numberOfPeople = " + metadata.get("numberOfPeople"));
+            System.out.println("amount = " + metadata.get("amount"));
+
+            if (metadata.get("houseId") == null
+                    || metadata.get("userId") == null
+                    || metadata.get("checkinDate") == null
+                    || metadata.get("checkoutDate") == null
+                    || metadata.get("numberOfPeople") == null
+                    || metadata.get("amount") == null) {
+                System.out.println("metadata不足のため予約保存しません");
+                return;
+            }
+
             reservationService.create(metadata);
+            System.out.println("reservation created");
 
         } catch (SignatureVerificationException e) {
-
             System.out.println("Invalid Stripe signature");
-
         } catch (Exception e) {
-
             e.printStackTrace();
-
         }
     }
 }
