@@ -23,4 +23,3 @@ public interface ReservationRepository extends JpaRepository<Reservation,Integer
 	
 	 List<Reservation> findByUserId(Integer userId);
 }
-
