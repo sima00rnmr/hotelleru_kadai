@@ -28,16 +28,16 @@ public class ShopController {
             @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
             Model model) {
 
-        // ① shop取得
+        // shop情報の取得
         Shop shop = shopRepository.findById(id).orElseThrow();
 
-        // ② ログインユーザー取得
+        // ログインユーザーの取得
         User user = userDetailsImpl.getUser();
 
-        // ③ ★ここが今回の目的★
+        // userアクションを渡す
         userActionService.saveAction(user, shop, "detail");
 
-        // ④ 画面に渡す
+        // 画面に渡す
         model.addAttribute("shop", shop);
 
         return "shops/show";
