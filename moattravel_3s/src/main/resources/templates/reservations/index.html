@@ -54,7 +54,16 @@
 								</div>
 							</div>
 						</div>
+						<div th:if="${topCategories != null and !topCategories.isEmpty()}" class="mb-4">
+							<h2 class="h5">あなたがよく選ぶカテゴリー</h2>
 
+							<div class="d-flex flex-wrap gap-2">
+								<a th:each="category : ${topCategories}"
+									th:href="@{/reservations(category=${category})}"
+									class="btn btn-outline-secondary btn-sm" th:text="${category}">
+								</a>
+							</div>
+						</div>
 						<table class="table">
 							<thead>
 								<tr>

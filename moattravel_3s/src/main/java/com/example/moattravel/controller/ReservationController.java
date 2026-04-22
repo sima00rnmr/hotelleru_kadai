@@ -56,18 +56,24 @@ public class ReservationController {
 	public String index(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
 	        @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable,
 	        @RequestParam(name = "reserved", required = false) String reserved,
+	        @RequestParam(name = "category", required = false) String category,
 	        Model model) {
 
 	    User user = userDetailsImpl.getUser();
 	    Page<Reservation> reservationPage = reservationRepository.findByUserOrderByCreatedAtDesc(user, pageable);
 	    model.addAttribute("reservationPage", reservationPage);
 
+	   
 	    if (reserved != null && !reservationPage.isEmpty()) {
 	        Reservation latestReservation = reservationPage.getContent().get(0);
 	        House house = latestReservation.getHouse();
 
+	        //予約が完了した時（遷移した時）だけ、おすすめ店舗を表示する
 	        List<Shop> recommendedShops = shopService.getRecommendedShops(house.getAddress());
 	        model.addAttribute("recommendedShops", recommendedShops);
+	        //同様に良く検索するカテゴリーについても表示する
+	        List<String> topCategories = shopService.getTopCategories(user.getId());
+	        model.addAttribute("topCategories", topCategories);
 	    }
 
 	    return "reservations/index";

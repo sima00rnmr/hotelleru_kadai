@@ -6,19 +6,27 @@ import org.springframework.stereotype.Service;
 
 import com.example.moattravel.entity.Shop;
 import com.example.moattravel.repository.ShopRepository;
+import com.example.moattravel.repository.UserShopActionRepository;
 
 @Service
 public class ShopService {
 
     private final ShopRepository shopRepository;
+    private final UserShopActionRepository userShopActionRepository;
 
-    public ShopService(ShopRepository shopRepository) {
+    public ShopService(ShopRepository shopRepository,UserShopActionRepository userShopActionRepository) {
         this.shopRepository = shopRepository;
+        this.userShopActionRepository = userShopActionRepository;
     }
 
     public List<Shop> getRecommendedShops(String address) {
         String city = extractCity(address);
         return shopRepository.findByAddressContaining(city);
+    }
+    
+    //カテゴリーのルール
+    public List<String> getTopCategories(Integer userId) {
+        return userShopActionRepository.findTopCategoriesByUserId(userId);
     }
 
     private String extractCity(String address) {
