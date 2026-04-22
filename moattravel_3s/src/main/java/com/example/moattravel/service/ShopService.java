@@ -18,10 +18,13 @@ public class ShopService {
         this.shopRepository = shopRepository;
         this.userShopActionRepository = userShopActionRepository;
     }
-
+    //市区町村で同じ所を抽出して提示する
     public List<Shop> getRecommendedShops(String address) {
         String city = extractCity(address);
         return shopRepository.findByAddressContaining(city);
+    }
+    public List<Shop> findByAddressAndCategory(String address, String category) {
+        return shopRepository.findByAddressContainingAndCategory(address, category);
     }
     
     //カテゴリーのルール

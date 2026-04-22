@@ -64,17 +64,31 @@ public class ReservationController {
 	    model.addAttribute("reservationPage", reservationPage);
 
 	   
-	    if (reserved != null && !reservationPage.isEmpty()) {
+	    List<Shop> recommendedShops;
+
+	    if (category != null && !reservationPage.isEmpty()) {
+	        // 予約後、カテゴリをクリックしたときの動き
 	        Reservation latestReservation = reservationPage.getContent().get(0);
 	        House house = latestReservation.getHouse();
 
-	        //予約が完了した時（遷移した時）だけ、おすすめ店舗を表示する
-	        List<Shop> recommendedShops = shopService.getRecommendedShops(house.getAddress());
-	        model.addAttribute("recommendedShops", recommendedShops);
-	        //同様に良く検索するカテゴリーについても表示する
-	        List<String> topCategories = shopService.getTopCategories(user.getId());
-	        model.addAttribute("topCategories", topCategories);
+	        recommendedShops = shopService.findByAddressAndCategory(house.getAddress(), category);
+
+	    } else if (reserved != null && !reservationPage.isEmpty()) {
+	        // 予約した後の状態　近いところの店舗6つ
+	        Reservation latestReservation = reservationPage.getContent().get(0);
+	        House house = latestReservation.getHouse();
+
+	        recommendedShops = shopService.getRecommendedShops(house.getAddress());
+
+	    } else {
+	        recommendedShops = List.of();
 	    }
+
+	    model.addAttribute("recommendedShops", recommendedShops);
+	    
+	    List<String> topCategories = shopService.getTopCategories(user.getId());
+	    model.addAttribute("topCategories", topCategories);
+
 
 	    return "reservations/index";
 	}
