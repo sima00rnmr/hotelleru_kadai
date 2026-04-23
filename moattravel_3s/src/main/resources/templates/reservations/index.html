@@ -40,8 +40,12 @@
 
 										<div class="card h-100">
 
-											<img th:if="${shop.imageUrl != null and !#strings.isEmpty(shop.imageUrl)}"
-												th:src="${shop.imageUrl}" class="card-img-top" alt="ショップ画像">
+											<img th:src="${shop.imageUrl != null and !#strings.isEmpty(shop.imageUrl)} 
+											              ? ${shop.imageUrl} 
+											              : '/images/shops/noImage.png'"
+											     class="card-img-top"
+											     style="aspect-ratio: 16 / 9; object-fit: cover; width: 100%;"
+											     alt="ショップ画像">
 
 											<div class="card-body">
 												<h5 class="card-title" th:text="${shop.name}">店名</h5>

@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org">
+
 <head>
 	<div th:replace="~{fragment :: meta}"></div>
 	<div th:replace="~{fragment :: styles}"></div>
 	<title>ショップ詳細</title>
 </head>
+
 <body>
 	<div class="moattravel-wrapper">
 
@@ -13,12 +15,25 @@
 		<main>
 			<div class="container moattravel-container pb-5">
 				<h1 class="mb-4" th:text="${shop.name}">ショップ名</h1>
-
+				<img th:src="${shop.imageUrl != null and !#strings.isEmpty(shop.imageUrl)} 
+				              ? ${shop.imageUrl} 
+				              : '/images/shops/noImage.png'" class="card-img-top"
+					style="aspect-ratio: 16 / 9; object-fit: cover; width: 100%;" alt="ショップ画像">
 				<p><strong>カテゴリ：</strong><span th:text="${shop.category}"></span></p>
-				<p><strong>住所：</strong><span th:text="${shop.address}"></span></p>
 				<p><strong>説明：</strong><span th:text="${shop.description}"></span></p>
 				<p><strong>評価：</strong><span th:text="${shop.rating}"></span></p>
-
+				<p><strong>住所：</strong><span th:text="${shop.address}"></span></p>
+				<p>
+					<a th:href="@{/shops/{id}/map(id=${shop.id})}" target="_blank" rel="noopener noreferrer"
+						class="btn btn-outline-primary btn-sm">
+						Googleマップで見る
+					</a>
+				</p>
+				<div class="mt-4">
+					<a th:href="@{/reservations(showShopSection=true)}" class="btn btn-outline-secondary">
+						予約一覧に戻る
+					</a>
+				</div>
 			</div>
 		</main>
 
@@ -27,4 +42,5 @@
 
 	<div th:replace="~{fragment :: scripts}"></div>
 </body>
+
 </html>
