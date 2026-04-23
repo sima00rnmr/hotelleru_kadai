@@ -57,38 +57,37 @@ public class ReservationController {
 	        @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable,
 	        @RequestParam(name = "reserved", required = false) String reserved,
 	        @RequestParam(name = "category", required = false) String category,
+	        @RequestParam(name = "showShopSection", required = false) String showShopSection,
 	        Model model) {
 
 	    User user = userDetailsImpl.getUser();
 	    Page<Reservation> reservationPage = reservationRepository.findByUserOrderByCreatedAtDesc(user, pageable);
 	    model.addAttribute("reservationPage", reservationPage);
 
-	   
 	    List<Shop> recommendedShops;
 
 	    if (category != null && !reservationPage.isEmpty()) {
-	        // 予約後、カテゴリをクリックしたときの動き
+	        // カテゴリボタンを押したときの動き（ここはそのまま）
 	        Reservation latestReservation = reservationPage.getContent().get(0);
 	        House house = latestReservation.getHouse();
 
 	        recommendedShops = shopService.findByAddressAndCategory(house.getAddress(), category);
 
-	    } else if (reserved != null && !reservationPage.isEmpty()) {
-	        // 予約した後の状態　近いところの店舗6つ
+	    } else if ((reserved != null || showShopSection != null) && !reservationPage.isEmpty()) {
+	        // 予約直後 or 店詳細から「予約一覧に戻る」のとき
 	        Reservation latestReservation = reservationPage.getContent().get(0);
 	        House house = latestReservation.getHouse();
 
-	        recommendedShops = shopService.getRecommendedShops(house.getAddress());
+	        recommendedShops = shopService.getRecommendedShops(house.getAddress(), user.getId());
 
 	    } else {
 	        recommendedShops = List.of();
 	    }
 
 	    model.addAttribute("recommendedShops", recommendedShops);
-	    
+
 	    List<String> topCategories = shopService.getTopCategories(user.getId());
 	    model.addAttribute("topCategories", topCategories);
-
 
 	    return "reservations/index";
 	}
