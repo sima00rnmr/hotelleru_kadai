@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<div th:replace="~{fragment :: meta}"></div>
+	<div th:replace="~{fragment :: styles}"></div>
+	<title>カテゴリ別店舗一覧</title>
+</head>
+
+<body>
+	<div class="moattravel-wrapper">
+
+		<!-- ヘッダー -->
+		<div th:replace="~{fragment :: header}"></div>
+
+		<main>
+			<div class="container moattravel-container pb-5">
+
+				<h2 class="h4 mb-4" th:text="'近隣のおススメ ' + ${category} + ' 一覧'"></h2>
+
+				<div th:if="${#lists.isEmpty(shopList)}">
+					<p>該当する店舗はありません。</p>
+				</div>
+
+				<div class="row">
+					<div class="col-md-4 mb-3" th:each="shop : ${shopList}">
+
+						<a th:href="@{/shops/{id}(id=${shop.id})}" class="text-decoration-none text-dark">
+
+							<div class="card h-100">
+
+								<img th:if="${shop.imageUrl != null and !#strings.isEmpty(shop.imageUrl)}"
+									th:src="${shop.imageUrl}" class="card-img-top" alt="ショップ画像">
+
+								<div class="card-body">
+									<h5 class="card-title" th:text="${shop.name}">店名</h5>
+									<p class="card-text" th:text="${shop.address}">住所</p>
+									<p class="card-text">
+										<span class="badge bg-secondary" th:text="${shop.category}"></span>
+									</p>
+								</div>
+
+							</div>
+						</a>
+
+					</div>
+				</div>
+
+			</div>
+		</main>
+
+		<!-- フッター -->
+		<div th:replace="~{fragment :: footer}"></div>
+
+	</div>
+
+	<!-- scripts -->
+	<div th:replace="~{fragment :: scripts}"></div>
+
+</body>
+
+</html>
