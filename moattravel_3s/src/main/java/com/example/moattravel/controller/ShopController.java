@@ -1,15 +1,19 @@
 package com.example.moattravel.controller;
 
+import java.util.List;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.moattravel.entity.Shop;
 import com.example.moattravel.entity.User;
 import com.example.moattravel.repository.ShopRepository;
 import com.example.moattravel.security.UserDetailsImpl;
+import com.example.moattravel.service.ShopService;
 import com.example.moattravel.service.UserActionService;
 
 @Controller
@@ -17,10 +21,12 @@ public class ShopController {
 
     private final ShopRepository shopRepository;
     private final UserActionService userActionService;
+    private final ShopService shopService;
 
-    public ShopController(ShopRepository shopRepository, UserActionService userActionService) {
+    public ShopController(ShopRepository shopRepository, UserActionService userActionService,ShopService shopService) {
         this.shopRepository = shopRepository;
         this.userActionService = userActionService;
+        this.shopService = shopService;
     }
 
     @GetMapping("/shops/{id}")
@@ -41,5 +47,13 @@ public class ShopController {
         model.addAttribute("shop", shop);
 
         return "shops/show";
+    }
+    //カテゴリーボタンを押した時の挙動
+    @GetMapping("/shops/category")
+    public String showShopsByCategory(@RequestParam String category, Model model) {
+        List<Shop> shopList = shopService.findByCategory(category);
+        model.addAttribute("shopList", shopList);
+        model.addAttribute("category", category);
+        return "shops/category_list";
     }
 }

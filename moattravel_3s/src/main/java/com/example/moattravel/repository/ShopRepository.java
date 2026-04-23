@@ -32,4 +32,6 @@ public interface ShopRepository extends JpaRepository<Shop, Integer> {
     List<Shop> findByAddressContaining(String city);
     //カテゴリ表示＞クリック時　市区町村かつカテゴリーで一致するものを提示
     List<Shop> findByAddressContainingAndCategory(String address, String category);
+    
+    List<Shop> findByCategory(String category);
 }

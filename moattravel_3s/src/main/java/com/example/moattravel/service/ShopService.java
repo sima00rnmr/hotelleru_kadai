@@ -31,6 +31,10 @@ public class ShopService {
     public List<String> getTopCategories(Integer userId) {
         return userShopActionRepository.findTopCategoriesByUserId(userId);
     }
+    
+    public List<Shop> findByCategory(String category) {
+        return shopRepository.findByCategory(category);
+    }	
 
     private String extractCity(String address) {
         if (address == null || address.isEmpty()) {

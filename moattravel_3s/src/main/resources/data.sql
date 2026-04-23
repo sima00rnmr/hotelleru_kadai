@@ -215,3 +215,4 @@ INSERT IGNORE INTO shops (name, category, description, address, lat, lng, rating
 INSERT IGNORE INTO shops (name, category, description, address, lat, lng, rating) VALUES ('仙台牛タン屋','和食','厚切り牛タン','宮城県仙台市1-1',38.2682,140.8694,4.6);
 INSERT IGNORE INTO shops (name, category, description, address, lat, lng, rating) VALUES ('福岡もつ鍋屋','居酒屋','博多名物','福岡県福岡市1-1',33.5902,130.4017,4.4);
 INSERT IGNORE INTO shops (name, category, description, address, lat, lng, rating) VALUES ('沖縄カフェ海','カフェ','リゾート風','沖縄県那覇市1-1',26.2124,127.6809,4.2);
+

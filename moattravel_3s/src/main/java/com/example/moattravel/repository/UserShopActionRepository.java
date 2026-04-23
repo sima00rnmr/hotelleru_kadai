@@ -40,5 +40,7 @@ public interface UserShopActionRepository extends JpaRepository<UserShopAction, 
         """, nativeQuery = true)
     List<String> findTopCategoriesByUserId(Integer userId);
     
+   
+    
     
 }

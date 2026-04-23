@@ -125,5 +125,8 @@ CREATE TABLE IF NOT EXISTS user_shop_actions (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (shop_id) REFERENCES shops(id)
+    FOREIGN KEY (shop_id) REFERENCES shops(id),
+    
+    CONSTRAINT uk_user_shop_actions_unique
+    UNIQUE (user_id, shop_id, action_type, created_at)
 );
