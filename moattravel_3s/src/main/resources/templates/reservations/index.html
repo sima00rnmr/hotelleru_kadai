@@ -30,44 +30,6 @@
 						<div th:if="${param.reserved}" class="alert alert-info">
 							予約が完了しました。
 						</div>
-						<div th:if="${recommendedShops != null and !recommendedShops.isEmpty()}" class="mb-4">
-							<h2 class="h4">近くのお店もいかがですか？</h2>
-
-							<div class="row">
-								<div class="col-md-4 mb-3" th:each="shop : ${recommendedShops}">
-
-									<a th:href="@{/shops/{id}(id=${shop.id})}" class="text-decoration-none text-dark">
-
-										<div class="card h-100">
-
-											<img th:src="${shop.imageUrl != null and !#strings.isEmpty(shop.imageUrl)} 
-											              ? ${shop.imageUrl} 
-											              : '/images/shops/noImage.png'"
-											     class="card-img-top"
-											     style="aspect-ratio: 16 / 9; object-fit: cover; width: 100%;"
-											     alt="ショップ画像">
-
-											<div class="card-body">
-												<h5 class="card-title" th:text="${shop.name}">店名</h5>
-												<p class="card-text" th:text="${shop.address}">住所</p>
-											</div>
-
-										</div>
-									</a>
-
-								</div>
-							</div>
-						</div>
-						<div th:if="${topCategories != null and !topCategories.isEmpty()}" class="mb-4">
-							<h2 class="h5">あなたがよく選ぶカテゴリー</h2>
-
-							<div class="d-flex flex-wrap gap-2">
-								<a th:each="category : ${topCategories}"
-									th:href="@{/reservations(category=${category})}"
-									class="btn btn-outline-secondary btn-sm" th:text="${category}">
-								</a>
-							</div>
-						</div>
 						<table class="table">
 							<thead>
 								<tr>
@@ -93,6 +55,45 @@
 								</tr>
 							</tbody>
 						</table>
+						<div class="mt-5"></div>
+						<div th:if="${recommendedShops != null and !recommendedShops.isEmpty()}" class="mb-4">
+							<h2 class="h4">近くのお店もいかがですか？</h2>
+
+							<div class="row">
+								<div class="col-md-4 mb-3" th:each="shop : ${recommendedShops}">
+
+									<a th:href="@{/shops/{id}(id=${shop.id})}" class="text-decoration-none text-dark">
+
+										<div class="card h-100">
+
+											<img th:src="${shop.imageUrl != null and !#strings.isEmpty(shop.imageUrl)} 
+											              ? ${shop.imageUrl} 
+											              : '/images/shops/noImage.png'" class="card-img-top"
+												style="aspect-ratio: 16 / 9; object-fit: cover; width: 100%;"
+												alt="ショップ画像">
+
+											<div class="card-body">
+												<h5 class="card-title" th:text="${shop.name}">店名</h5>
+												<p class="card-text" th:text="${shop.address}">住所</p>
+											</div>
+
+										</div>
+									</a>
+
+								</div>
+							</div>
+						</div>
+						<div th:if="${topCategories != null and !topCategories.isEmpty()}" class="mb-4">
+							<h2 class="h5">あなたがよく選ぶカテゴリー</h2>
+
+							<div class="d-flex flex-wrap gap-2">
+								<a th:each="category : ${topCategories}"
+									th:href="@{/reservations(category=${category})}"
+									class="btn btn-outline-secondary btn-sm" th:text="${category}">
+								</a>
+							</div>
+						</div>
+
 
 						<!-- ページネーション -->
 						<div th:if="${reservationPage.getTotalPages() > 1}" class="d-flex justify-content-center">
