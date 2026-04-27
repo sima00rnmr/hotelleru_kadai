@@ -42,7 +42,7 @@ public class ShopController {
 
 		// ログインユーザーの取得
 		User user = userDetailsImpl.getUser();
-
+		//サービスを呼び出して"map"をDBに記録させる動き
 		// userアクションを渡す
 		userActionService.saveAction(user, shop, "detail");
 
@@ -72,7 +72,7 @@ public class ShopController {
 	        @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
 
 	    Shop shop = shopRepository.findById(id).orElseThrow();
-
+//サービスを呼び出して"map"をDBに記録させる動き
 	    if (userDetailsImpl != null) {
 	        User user = userDetailsImpl.getUser();
 	        userActionService.saveAction(user, shop, "map");
